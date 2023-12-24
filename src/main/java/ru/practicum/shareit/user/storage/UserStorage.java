@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.storage;
 
-import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;

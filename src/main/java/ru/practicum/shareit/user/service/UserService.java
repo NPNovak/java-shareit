@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserCreate;
 import ru.practicum.shareit.user.dto.UserResponse;
 import ru.practicum.shareit.user.dto.UserUpdate;
