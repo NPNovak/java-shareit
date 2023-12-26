@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.dto.UserCreate;
 
 @Data
 @AllArgsConstructor
-public class ItemResponse {
+public class ItemResponseDto {
 
     private int id;
 

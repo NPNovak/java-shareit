@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ItemUpdate {
+public class ItemUpdateDto {
 
     private Integer id;
 

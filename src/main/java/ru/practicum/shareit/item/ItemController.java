@@ -7,9 +7,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemResponse;
-import ru.practicum.shareit.item.dto.ItemUpdate;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.dto.ItemResponseDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.service.ItemServiceImpl;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -20,37 +20,37 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemServiceImpl itemServiceImpl;
 
     @PostMapping
-    public ResponseEntity<ItemResponse> addItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) throws ValidationException {
+    public ResponseEntity<ItemResponseDto> addItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                                   @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) throws ValidationException {
         log.info("Получен POST запрос на добавление нового товара");
-        return ResponseEntity.ok(itemService.addItem(userId, itemDto, bindingResult));
+        return ResponseEntity.ok(itemServiceImpl.addItem(userId, itemDto, bindingResult));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ItemResponse> updateItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                           @RequestBody ItemUpdate itemUpdate, @PathVariable("id") Integer itemId) {
-        log.info("Получен Patch запрос на обновление товара");
-        return ResponseEntity.ok(itemService.updateItem(userId, itemId, itemUpdate));
+    public ResponseEntity<ItemResponseDto> updateItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                                      @RequestBody ItemUpdateDto itemUpdateDto, @PathVariable("id") Integer itemId) {
+        log.info("Получен Patch запрос на обновление товара c id ={}", itemId);
+        return ResponseEntity.ok(itemServiceImpl.updateItem(userId, itemId, itemUpdateDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ItemResponse> getItem(@PathVariable("id") Integer itemId) {
+    public ResponseEntity<ItemResponseDto> getItem(@PathVariable("id") Integer itemId) {
         log.info("Получен GET запрос на получение товара");
-        return ResponseEntity.ok(itemService.getItem(itemId));
+        return ResponseEntity.ok(itemServiceImpl.getItemById(itemId));
     }
 
     @GetMapping
-    public ResponseEntity<Collection<ItemResponse>> getAllItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public ResponseEntity<Collection<ItemResponseDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("Получен GET запрос на получение всех товаров");
-        return ResponseEntity.ok(itemService.getAllItems(userId));
+        return ResponseEntity.ok(itemServiceImpl.getAllItems(userId));
     }
 
     @GetMapping("search")
-    public ResponseEntity<Collection<ItemResponse>> search(@RequestParam String text) {
+    public ResponseEntity<Collection<ItemResponseDto>> search(@RequestParam String text) {
         log.info("Получен GET запрос на получение всех товаров по названию");
-        return ResponseEntity.ok(itemService.search(text));
+        return ResponseEntity.ok(itemServiceImpl.search(text));
     }
 }
