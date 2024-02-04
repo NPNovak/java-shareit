@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class UserCreate {
+public class UserCreateDto {
 
     private int id;
 
