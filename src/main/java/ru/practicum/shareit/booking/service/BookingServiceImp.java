@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class BookingServiceImp implements BookingService{
+public class BookingServiceImp implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
