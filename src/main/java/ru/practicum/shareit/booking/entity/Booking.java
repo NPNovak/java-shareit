@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "booking_id")
+    @Column
     private int id;
 
     @Column(name = "start_date")
@@ -32,6 +32,6 @@ public class Booking {
     @JoinColumn(name = "booker_id")
     private User booker;
 
-    @Column(name = "status")
+    @Column
     private String status;
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.booking.service.BookingServiceImp;
 import ru.practicum.shareit.error.exception.ValidationException;
 
 import javax.validation.Valid;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
 public class BookingController {
-    private final BookingService bookingService;
+    private final BookingServiceImp bookingService;
 
     @PostMapping
     public BookingResponseDto addBooking(@RequestHeader("X-Sharer-User-Id") Integer userId,

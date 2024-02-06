@@ -15,10 +15,10 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column
     private int id;
 
-    @Column(name = "text")
+    @Column
     private String text;
 
     @ManyToOne
@@ -29,6 +29,6 @@ public class Comment {
     @JoinColumn(name = "author_id")
     private User author;
 
-    @Column(name = "created")
+    @Column
     private LocalDateTime created;
 }

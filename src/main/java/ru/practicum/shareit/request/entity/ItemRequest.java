@@ -15,16 +15,16 @@ public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "request_id")
+    @Column
     private int id;
 
-    @Column(name = "description")
+    @Column
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "requester_id")
     private User requester;
 
-    @Column(name = "created")
+    @Column
     private LocalDateTime created;
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImp;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImp userService;
 
     @GetMapping
     public ResponseEntity<Collection<UserResponseDto>> getAllUsers() {

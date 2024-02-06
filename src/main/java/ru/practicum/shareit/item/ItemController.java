@@ -7,7 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.service.ItemServiceImp;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class ItemController {
 
-    private final ItemService itemService;
+    private final ItemServiceImp itemService;
 
     @PostMapping
     public ResponseEntity<ItemResponseDto> addItem(@RequestHeader("X-Sharer-User-Id") Integer userId,

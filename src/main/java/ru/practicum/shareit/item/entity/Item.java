@@ -15,13 +15,13 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
+    @Column
     private int id;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
-    @Column(name = "description")
+    @Column
     private String description;
 
     @Column(name = "is_available")

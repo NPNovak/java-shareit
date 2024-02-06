@@ -13,13 +13,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column
     private int id;
 
-    @Column(name = "email")
+    @Column
     private String email;
 
-    @Column(name = "name")
+    @Column
     private String name;
 
 }
