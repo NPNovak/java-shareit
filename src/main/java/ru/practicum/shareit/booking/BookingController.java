@@ -22,38 +22,38 @@ public class BookingController {
     @PostMapping
     public BookingResponseDto addBooking(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                          @Valid @RequestBody BookingDto bookingDto, BindingResult bindingResult) throws ValidationException {
-        log.info("Получен POST запрос на добавление нового бронирования");
+        log.debug("Получен POST запрос на добавление нового бронирования: dto - " + bookingDto + " userId - " + userId);
         return bookingService.addBooking(userId, bookingDto, bindingResult);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingResponseDto updateStatus(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                        @PathVariable("bookingId") Integer bookingId,
-                                        @RequestParam String approved) throws ValidationException {
-        log.info("Получен PATCH запрос на подтверждение бронирования");
+                                           @PathVariable("bookingId") Integer bookingId,
+                                           @RequestParam String approved) throws ValidationException {
+        log.debug("Получен PATCH запрос на подтверждение бронирования: bookingId - " + bookingId + " userId - " + userId);
         return bookingService.updateStatus(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
     public BookingResponseDto getBooking(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                      @PathVariable("bookingId") Integer bookingId) {
-        log.info("Получен GET запрос на получение данных о конкретном бронировании");
+                                         @PathVariable("bookingId") Integer bookingId) {
+        log.debug("Получен GET запрос на получение данных о конкретном бронировании: bookingId - " + bookingId + " userId - " + userId);
         return bookingService.getBooking(userId, bookingId);
     }
 
     @GetMapping
     public List<BookingResponseDto> getBookingList(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                @RequestParam(defaultValue = "ALL") String state) throws ValidationException {
+                                                   @RequestParam(defaultValue = "ALL") String state) throws ValidationException {
 
 
-        log.info("Получен GET запрос на получение данных о бронировании текущего пользователя");
+        log.debug("Получен GET запрос на получение данных о бронировании текущего пользователя: state - " + state + " userId - " + userId);
         return bookingService.getBookingList(userId, state);
     }
 
     @GetMapping("/owner")
     public List<BookingResponseDto> getBookingListByItemOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                           @RequestParam(defaultValue = "ALL") String  state) throws ValidationException {
-        log.info("Получен GET запрос на получение списка бронирований для всех вещей текущего пользователя");
+                                                              @RequestParam(defaultValue = "ALL") String state) throws ValidationException {
+        log.debug("Получен GET запрос на получение списка бронирований для всех вещей текущего пользователя: state - " + state + " userId - " + userId);
         return bookingService.getBookingListByItemOwner(userId, state);
     }
 }
