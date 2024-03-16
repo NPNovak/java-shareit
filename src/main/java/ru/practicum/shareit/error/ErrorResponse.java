@@ -1,11 +1,18 @@
 package ru.practicum.shareit.error;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class ErrorResponse {
+
     private String error;
-    private String description;
+    private String timestamp;
+
+    public ErrorResponse(String error, String timestamp) {
+        this.error = error;
+        this.timestamp = timestamp;
+    }
 }
+

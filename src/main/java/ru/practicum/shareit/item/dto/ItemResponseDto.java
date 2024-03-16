@@ -2,8 +2,10 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.dto.UserCreate;
+import ru.practicum.shareit.request.entity.ItemRequest;
+import ru.practicum.shareit.user.dto.UserCreateDto;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +19,13 @@ public class ItemResponseDto {
 
     private Boolean available;
 
-    private UserCreate owner;
+    private UserCreateDto owner;
 
     private ItemRequest request;
+
+    private ItemBookingDto lastBooking;
+
+    private ItemBookingDto nextBooking;
+
+    private List<CommentResponseDto> comments;
 }

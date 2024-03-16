@@ -1,23 +1,23 @@
 package ru.practicum.shareit.user.mapper;
 
 import org.mapstruct.Mapper;
-import ru.practicum.shareit.user.dto.UserCreate;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserResponseDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.entity.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toUser(UserCreate userCreate);
+    User toUser(UserCreateDto userCreateDto);
 
-    UserCreate toUserCreate(User user);
+    UserCreateDto toUserCreateDto(User user);
 
-    User toUser(UserUpdateDto userCreate);
+    User toUser(UserUpdateDto userCreateDto);
 
-    UserCreate toUserUpdate(User user);
+    UserCreateDto toUserUpdateDto(User user);
 
     User toUser(UserResponseDto userResponseDto);
 
-    UserResponseDto toUserResponse(User user);
+    UserResponseDto toUserResponseDto(User user);
 }
