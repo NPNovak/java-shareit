@@ -68,7 +68,7 @@ public class ItemServiceImp implements ItemService {
     @Transactional
     public ItemResponseDto updateItem(Integer userId, Integer itemId, ItemUpdateDto itemUpdate) {
         Item inItem = mapper.toItem(getItemById(itemId, userId));
-        if (inItem.getOwner().getId() == userId) {
+        if (inItem.getOwner().getId().equals(userId)) {
             if (itemUpdate.getName() != null) {
                 inItem.setName(itemUpdate.getName());
             }
@@ -103,7 +103,7 @@ public class ItemServiceImp implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Товара с такими id нет"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователя с такими id нет"));
         ItemResponseDto itemResponse = mapper.toItemResponseDto(item);
-        if (user.getId() == item.getOwner().getId()) {
+        if (user.getId().equals(item.getOwner().getId())) {
             addLastAndNextBooking(itemResponse, userId);
         }
         List<Comment> commentList = commentRepository.findByItemId(itemId);
@@ -146,7 +146,7 @@ public class ItemServiceImp implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователя с такими id нет"));
         bookingRepository.findFirstByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now())
                 .orElseThrow(() -> new ValidationException("User с заданным id = " + userId + " ещё не брал в аренду этот предмет"));
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new ValidationException("User с заданным id = " + userId + " является владельцем");
         }
         Comment comment = new Comment();
