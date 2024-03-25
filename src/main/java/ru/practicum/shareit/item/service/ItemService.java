@@ -13,9 +13,9 @@ public interface ItemService {
 
     ItemResponseDto getItemById(Integer itemId, Integer userId);
 
-    Collection<ItemResponseDto> getAllItems(Integer userId);
+    Collection<ItemResponseDto> getAllItems(Integer userId, int from, int size);
 
-    Collection<ItemResponseDto> search(String text);
+    Collection<ItemResponseDto> search(String text, int from, int size);
 
     CommentResponseDto addComment(Integer userId, CommentDto commentDto, Integer itemId) throws ValidationException;
 

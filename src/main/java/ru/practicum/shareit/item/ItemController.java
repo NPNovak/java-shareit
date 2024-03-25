@@ -42,21 +42,23 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<Collection<ItemResponseDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public ResponseEntity<Collection<ItemResponseDto>> getAllItems(@RequestHeader("X-Sharer-User-Id") Integer userId, @RequestParam(defaultValue = "0") int from,
+                                                                   @RequestParam(defaultValue = "20") int size) {
         log.info("Получен GET запрос на получение всех товаров");
-        return ResponseEntity.ok(itemService.getAllItems(userId));
+        return ResponseEntity.ok(itemService.getAllItems(userId, from, size));
     }
 
     @GetMapping("search")
-    public ResponseEntity<Collection<ItemResponseDto>> search(@RequestParam String text) {
+    public ResponseEntity<Collection<ItemResponseDto>> search(@RequestParam String text, @RequestParam(defaultValue = "0") int from,
+                                                              @RequestParam(defaultValue = "20") int size) {
         log.info("Получен GET запрос на получение всех товаров по названию");
-        return ResponseEntity.ok(itemService.search(text));
+        return ResponseEntity.ok(itemService.search(text, from, size));
     }
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<CommentResponseDto> addComment(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                         @RequestBody CommentDto commentDto,
-                                         @PathVariable("itemId") Integer itemId) throws ValidationException {
+                                                         @RequestBody CommentDto commentDto,
+                                                         @PathVariable("itemId") Integer itemId) throws ValidationException {
         log.info("Получен POST запрос на добавление нового коментария");
         return ResponseEntity.ok(itemService.addComment(userId, commentDto, itemId));
     }

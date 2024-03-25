@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.service.BookingServiceImp;
 import ru.practicum.shareit.error.exception.ValidationException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -43,17 +44,20 @@ public class BookingController {
 
     @GetMapping
     public List<BookingResponseDto> getBookingList(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                   @RequestParam(defaultValue = "ALL") String state) throws ValidationException {
-
+                                                   @RequestParam(defaultValue = "ALL") String state,
+                                                   @RequestParam(defaultValue = "0") @Min(value = 0, message = "From must be greater than or equal to 0") int from,
+                                                   @RequestParam(defaultValue = "20") @Min(value = 0, message = "Size must be greater than or equal to 0") int size) throws ValidationException {
 
         log.debug("Получен GET запрос на получение данных о бронировании текущего пользователя: state - " + state + " userId - " + userId);
-        return bookingService.getBookingList(userId, state);
+        return bookingService.getBookingList(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingResponseDto> getBookingListByItemOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                              @RequestParam(defaultValue = "ALL") String state) throws ValidationException {
+                                                              @RequestParam(defaultValue = "ALL") String state,
+                                                              @RequestParam(defaultValue = "0") @Min(value = 0, message = "From must be greater than or equal to 0") int from,
+                                                              @RequestParam(defaultValue = "20") @Min(value = 0, message = "Size must be greater than or equal to 0") int size) throws ValidationException {
         log.debug("Получен GET запрос на получение списка бронирований для всех вещей текущего пользователя: state - " + state + " userId - " + userId);
-        return bookingService.getBookingListByItemOwner(userId, state);
+        return bookingService.getBookingListByItemOwner(userId, state, from, size);
     }
 }

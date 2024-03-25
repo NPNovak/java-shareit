@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
+import ru.practicum.shareit.item.dto.RequestedItemRequest;
 import ru.practicum.shareit.item.entity.Item;
 
 @Mapper(componentModel = "spring")
@@ -20,4 +21,6 @@ public interface ItemMapper {
     Item toItem(ItemResponseDto itemResponseDto);
 
     ItemResponseDto toItemResponseDto(Item item);
+
+    RequestedItemRequest toRequestedItemRequest(Item item, Integer requestId);
 }

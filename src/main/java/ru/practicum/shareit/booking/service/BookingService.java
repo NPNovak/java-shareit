@@ -15,7 +15,7 @@ public interface BookingService {
 
     BookingResponseDto getBooking(Integer userId, Integer bookingId);
 
-    List<BookingResponseDto> getBookingList(Integer userId, String state) throws ValidationException;
+    List<BookingResponseDto> getBookingList(Integer userId, String state, int from, int size) throws ValidationException;
 
-    List<BookingResponseDto> getBookingListByItemOwner(Integer userId, String state) throws ValidationException;
+    List<BookingResponseDto> getBookingListByItemOwner(Integer userId, String state, int from, int size) throws ValidationException;
 }

@@ -15,4 +15,5 @@ public class ItemUpdateDto {
 
     private Boolean available;
 
+    private Integer requestId;
 }
