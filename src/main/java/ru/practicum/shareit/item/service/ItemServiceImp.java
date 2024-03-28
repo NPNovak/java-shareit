@@ -99,6 +99,7 @@ public class ItemServiceImp implements ItemService {
         }
     }
 
+    @Transactional
     public ItemResponseDto getItemById(Integer itemId, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Товара с такими id нет"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователя с такими id нет"));

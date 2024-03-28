@@ -1,13 +1,13 @@
 package ru.practicum.shareit.item.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.booking.entity.Booking;
@@ -111,16 +112,34 @@ class ItemServiceImpTest {
         itemResponseDto.setLastBooking(new ItemBookingDto(1, 5));
         itemResponseDto.setLastBooking(new ItemBookingDto(2, 6));
 
+        List<Comment> commentList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            Comment comment = new Comment();
+            comment.setId(i + 1);
+            comment.setText("comment" + i);
+            comment.setAuthor(new User());
+            comment.setCreated(LocalDateTime.now());
+            commentList.add(comment);
+        }
+
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(owner));
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(item));
         when(mapper.toItemResponseDto(item)).thenReturn(itemResponseDto);
-        when(commentRepository.findByItemId(anyInt())).thenReturn(List.of());
+        when(commentRepository.findByItemId(anyInt())).thenReturn(commentList);
         when(bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(anyInt(), anyInt(), any(LocalDateTime.class), anyString()))
                 .thenReturn(lastBooking);
         when(bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(anyInt(), anyInt(), any(LocalDateTime.class), anyString()))
                 .thenReturn(nextBooking);
 
-        assertEquals(itemResponseDto, itemService.getItemById(1, 1));
+        ItemResponseDto result = itemService.getItemById(1, 1);
+
+        assertNotNull(itemResponseDto.getComments());
+        assertEquals(commentList.size(), itemResponseDto.getComments().size());
+        assertEquals(commentList.get(0).getId(), itemResponseDto.getComments().get(0).getId());
+        assertEquals(commentList.get(0).getText(), itemResponseDto.getComments().get(0).getText());
+        assertEquals(commentList.get(0).getAuthor().getName(), itemResponseDto.getComments().get(0).getAuthorName());
+        assertEquals(commentList.get(0).getCreated(), itemResponseDto.getComments().get(0).getCreated());
+        assertEquals(itemResponseDto, result);
     }
 
     @Test
@@ -261,5 +280,99 @@ class ItemServiceImpTest {
         when(bookingRepository.findFirstByBookerIdAndItemIdAndEndBefore(anyInt(), anyInt(), any(LocalDateTime.class))).thenReturn(Optional.empty());
 
         assertThrows(ValidationException.class, () -> itemService.addComment(2, commentDto, 1));
+    }
+
+    @Test
+    void updateItem_WhenItemFound() {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(2);
+        itemDto.setRequestId(1);
+
+        Item itemOld = new Item();
+        itemOld.setId(1);
+        itemOld.setName("name old");
+        itemOld.setDescription("description old");
+        itemOld.setAvailable(true);
+
+        ItemUpdateDto itemUpdateDto = new ItemUpdateDto();
+        itemUpdateDto.setId(3);
+        itemUpdateDto.setName("name new");
+        itemUpdateDto.setDescription("description new");
+        itemUpdateDto.setAvailable(false);
+        itemUpdateDto.setRequestId(2);
+
+        ItemResponseDto itemResponseDto = new ItemResponseDto();
+        itemResponseDto.setId(1);
+        itemResponseDto.setName("name new");
+        itemResponseDto.setDescription("description new");
+        itemResponseDto.setAvailable(false);
+        itemResponseDto.setRequestId(2);
+        itemResponseDto.setComments(List.of());
+
+        User owner = new User();
+        owner.setId(1);
+        itemOld.setOwner(owner);
+
+        User booker = new User();
+        booker.setId(2);
+
+
+        when(itemRepository.findById(1)).thenReturn(Optional.of(itemOld));
+        when(userRepository.findById(1)).thenReturn(Optional.of(owner));
+        when(mapper.toItemResponseDto(itemOld)).thenReturn(itemResponseDto);
+        when(commentRepository.findByItemId(anyInt())).thenReturn(List.of());
+        when(mapper.toItem(itemResponseDto)).thenReturn(itemOld);
+        when(itemRequestRepository.findById(2)).thenReturn(Optional.of(new ItemRequest()));
+        when(itemRepository.save(itemOld)).thenReturn(itemOld);
+        when(mapper.toItemResponseDto(itemOld)).thenReturn(itemResponseDto);
+
+        assertEquals(itemResponseDto, itemService.updateItem(1, 1, itemUpdateDto));
+    }
+
+    @Test
+    void getAllItems_whenAllOk() {
+        User owner = new User();
+        owner.setId(1);
+
+        Item item1 = new Item();
+        item1.setId(1);
+        item1.setName("item1");
+        item1.setDescription("description1");
+        item1.setAvailable(true);
+        item1.setOwner(owner);
+
+        Item item2 = new Item();
+        item2.setId(2);
+        item2.setName("item2");
+        item2.setDescription("description2");
+        item2.setAvailable(false);
+        item2.setOwner(owner);
+
+        ItemResponseDto itemResponseDto1 = new ItemResponseDto();
+        itemResponseDto1.setId(1);
+        itemResponseDto1.setName("item1");
+        itemResponseDto1.setDescription("description1");
+        itemResponseDto1.setAvailable(true);
+        itemResponseDto1.setRequestId(2);
+        itemResponseDto1.setComments(List.of());
+
+        ItemResponseDto itemResponseDto2 = new ItemResponseDto();
+        itemResponseDto2.setId(2);
+        itemResponseDto2.setName("item2");
+        itemResponseDto2.setDescription("description2");
+        itemResponseDto2.setAvailable(false);
+        itemResponseDto1.setRequestId(2);
+        itemResponseDto1.setComments(List.of());
+
+        when(itemRepository.findById(1)).thenReturn(Optional.of(item1));
+        when(userRepository.findById(1)).thenReturn(Optional.of(owner));
+        when(mapper.toItemResponseDto(item1)).thenReturn(itemResponseDto1);
+        when(commentRepository.findByItemId(anyInt())).thenReturn(List.of());
+        when(itemRepository.findById(2)).thenReturn(Optional.of(item2));
+        when(commentRepository.findByItemId(anyInt())).thenReturn(List.of());
+        when(mapper.toItemResponseDto(item2)).thenReturn(itemResponseDto2);
+        when(itemRepository.findByOwnerId(1, PageRequest.of(0, 2))).thenReturn(Arrays.asList(item1, item2));
+
+        assertEquals(Arrays.asList(itemResponseDto1, itemResponseDto2), itemService.getAllItems(1, 0, 2));
     }
 }

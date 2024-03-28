@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.request.entity.ItemRequest;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 
@@ -13,6 +10,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ItemResponseDto {
 
     private int id;
