@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Integer> {
     List<Item> findByOwnerId(Integer id, Pageable pageable);
 
-    Optional<Item> findFirstByOwnerId(long userId);
+    Optional<Item> findFirstByOwnerId(Integer userId);
 
     List<Item> findByRequestIdOrderByRequestCreatedDesc(Integer requestId);
 
@@ -23,5 +23,5 @@ public interface ItemRepository extends JpaRepository<Item, Integer> {
             nativeQuery = true)
     List<Item> search(@Param("text") String text, Pageable pageable);
 
-    void deleteByOwnerId(long ownerId);
+    void deleteByOwnerId(Integer ownerId);
 }

@@ -19,7 +19,6 @@ class UserRepositoryTestIT {
     @Transactional
     void findByEmailAndIdNot() {
         User user = new User(1, "Alice", "test@gmail.com");
-        ;
         userRepository.save(user);
 
         User result = userRepository.findByEmailAndIdNot("test@gmail.com", 2);

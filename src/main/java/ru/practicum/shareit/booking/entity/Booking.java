@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.user.entity.User;
 
@@ -11,6 +10,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "bookings", schema = "public")
 public class Booking {
     @Id
