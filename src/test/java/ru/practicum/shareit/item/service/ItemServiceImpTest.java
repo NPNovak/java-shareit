@@ -26,7 +26,6 @@ import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
-import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -55,9 +54,6 @@ class ItemServiceImpTest {
 
     @Mock
     private BookingRepository bookingRepository;
-
-    @Mock
-    private CommentMapper commentMapper;
 
     @Mock
     private ItemMapper mapper;
