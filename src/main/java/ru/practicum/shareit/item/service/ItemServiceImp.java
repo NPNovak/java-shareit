@@ -138,7 +138,7 @@ public class ItemServiceImp implements ItemService {
     }
 
     public CommentResponseDto addComment(Integer userId, CommentDto commentDto, Integer itemId) throws ValidationException {
-        if (commentDto.getText().isBlank() || commentDto.getText() == null) {
+        if (commentDto.getText().isBlank()) {
             throw new ValidationException("поле comment не может быть пустым");
         }
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Товара с такими id нет"));
