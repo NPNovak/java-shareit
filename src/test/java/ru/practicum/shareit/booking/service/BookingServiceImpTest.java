@@ -325,7 +325,7 @@ class BookingServiceImpTest {
         when(repository.save(booking)).thenReturn(booking);
         when(mapper.toBookingResponse(booking)).thenReturn(bookingResponseDto);
 
-        assertEquals(bookingResponseDto, service.updateStatus(2, 1, "APPROVED"));
+        assertEquals(bookingResponseDto, service.updateStatus(1, 1, "APPROVED"));
     }
 
     @Test
@@ -349,7 +349,7 @@ class BookingServiceImpTest {
         when(repository.save(booking)).thenReturn(booking);
         when(mapper.toBookingResponse(booking)).thenReturn(bookingResponseDto);
 
-        assertEquals(bookingResponseDto, service.updateStatus(2, 1, "false"));
+        assertEquals(bookingResponseDto, service.updateStatus(1, 1, "false"));
     }
 
     @Test
