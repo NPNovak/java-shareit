@@ -66,7 +66,7 @@ public class BookingServiceImp implements BookingService {
     @Transactional
     public BookingResponseDto updateStatus(Integer userId, Integer bookingId, String approved) throws ValidationException {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Брони с такими id нет"));
-        if (booking.getItem().getOwner().getId().equals(userId)) {
+        if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException("Товар не приндалежит данному пользователю");
         }
         if (booking.getStatus().equals("APPROVED")) {
@@ -84,7 +84,7 @@ public class BookingServiceImp implements BookingService {
 
     public BookingResponseDto getBooking(Integer userId, Integer bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Брони с такими id нет"));
-        if (!booking.getItem().getOwner().getId().equals(userId) && booking.getBooker().getId().equals(userId)) {
+        if (!booking.getItem().getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
             throw new NotFoundException("Товар или бронь не приндалежит данному пользователю");
         }
         log.info("Бронирование отображено");
