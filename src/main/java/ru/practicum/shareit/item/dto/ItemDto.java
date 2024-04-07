@@ -3,12 +3,17 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.item.util.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 public class ItemDto {
 
     private Integer id;
@@ -21,4 +26,6 @@ public class ItemDto {
 
     @NotNull
     private Boolean available;
+
+    private Integer requestId;
 }

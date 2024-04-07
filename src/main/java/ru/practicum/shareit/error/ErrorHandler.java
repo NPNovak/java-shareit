@@ -24,7 +24,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private ErrorResponse handleValidationException(ValidationException e) {
+    ErrorResponse handleValidationException(ValidationException e) {
         log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
         return new ErrorResponse(
                 e.getMessage(),

@@ -53,9 +53,6 @@ public class UserServiceImp implements UserService {
     @Transactional
     public UserResponseDto deleteUserById(Integer userId) {
         User inUser = mapper.toUser(getUserById(userId));
-        if (getUserById(userId) == null) {
-            throw new NotFoundException("Такого " + userId + " не существует");
-        }
         userRepository.deleteById(userId);
         return mapper.toUserResponseDto(inUser);
     }

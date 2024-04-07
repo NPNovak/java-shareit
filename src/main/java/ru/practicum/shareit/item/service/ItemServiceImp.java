@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -12,11 +14,11 @@ import ru.practicum.shareit.error.exception.ValidationException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
-import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.util.ItemValidation;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.entity.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -24,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,10 +35,10 @@ import java.util.stream.Collectors;
 public class ItemServiceImp implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-    private final CommentMapper commentMapper;
     private final ItemMapper mapper;
 
     @Transactional
@@ -47,13 +48,25 @@ public class ItemServiceImp implements ItemService {
         Item item = mapper.toItem(itemDto);
         item.setOwner(user);
         log.info("Добавлен товар");
-        return mapper.toItemResponseDto(itemRepository.save(item));
+
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("ItemRequest с заданным id = " + itemDto.getRequestId() + " не найден")));
+        }
+
+        ItemResponseDto result = mapper.toItemResponseDto(itemRepository.save(item));
+
+        if (result.getRequestId() == null && itemDto.getRequestId() != null) {
+            result.setRequestId(itemDto.getRequestId());
+        }
+
+        return result;
     }
 
     @Transactional
     public ItemResponseDto updateItem(Integer userId, Integer itemId, ItemUpdateDto itemUpdate) {
         Item inItem = mapper.toItem(getItemById(itemId, userId));
-        if (inItem.getOwner().getId() == userId) {
+        if (inItem.getOwner().getId().equals(userId)) {
             if (itemUpdate.getName() != null) {
                 inItem.setName(itemUpdate.getName());
             }
@@ -63,19 +76,33 @@ public class ItemServiceImp implements ItemService {
             if (itemUpdate.getAvailable() != null) {
                 inItem.setAvailable(itemUpdate.getAvailable());
             }
+
+            if (itemUpdate.getRequestId() != null) {
+                inItem.setRequest(itemRequestRepository.findById(itemUpdate.getRequestId())
+                        .orElseThrow(() -> new NotFoundException("ItemRequest с заданным id = " + itemUpdate.getRequestId() + " не найден")));
+            }
+
             itemRepository.save(inItem);
             log.info("Обновлен товар");
+
+            ItemResponseDto result = mapper.toItemResponseDto(inItem);
+
+            if (result.getRequestId() == null && itemUpdate.getRequestId() != null) {
+                result.setRequestId(itemUpdate.getRequestId());
+            }
+
             return mapper.toItemResponseDto(inItem);
         } else {
             throw new NotFoundException("Данный товар не принадлежит пользователю с id = " + userId);
         }
     }
 
+    @Transactional
     public ItemResponseDto getItemById(Integer itemId, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Товара с такими id нет"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователя с такими id нет"));
         ItemResponseDto itemResponse = mapper.toItemResponseDto(item);
-        if (user.getId() == item.getOwner().getId()) {
+        if (user.getId().equals(item.getOwner().getId())) {
             addLastAndNextBooking(itemResponse, userId);
         }
         List<Comment> commentList = commentRepository.findByItemId(itemId);
@@ -91,34 +118,34 @@ public class ItemServiceImp implements ItemService {
         return itemResponse;
     }
 
-    public Collection<ItemResponseDto> getAllItems(Integer userId) {
+    public Collection<ItemResponseDto> getAllItems(Integer userId, int from, int size) {
         log.info("Отображен список всех товаров пользователя");
-        return itemRepository.findByOwnerId(userId).stream().map(x -> getItemById(x.getId(), userId)).collect(Collectors.toList());
+        Pageable unsortedPageable = PageRequest.of(from / size, size);
+        return itemRepository.findByOwnerId(userId, unsortedPageable).stream().map(x -> getItemById(x.getId(), userId)).collect(Collectors.toList());
     }
 
-    public Collection<ItemResponseDto> search(String text) {
+    public Collection<ItemResponseDto> search(String text, int from, int size) {
         log.info("Вывод результатов поиска");
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return itemRepository.findAll().stream()
-                .filter(x -> x.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
-                        || x.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)))
-                .filter(Item::getAvailable)
+        Pageable unsortedPageable = PageRequest.of(from / size, size);
+
+        return itemRepository.search(text, unsortedPageable).stream()
                 .map(mapper::toItemResponseDto)
                 .collect(Collectors.toList());
     }
 
     public CommentResponseDto addComment(Integer userId, CommentDto commentDto, Integer itemId) throws ValidationException {
-        if (commentDto.getText().isBlank() || commentDto.getText() == null) {
+        if (commentDto.getText().isBlank()) {
             throw new ValidationException("поле comment не может быть пустым");
         }
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Товара с такими id нет"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователя с такими id нет"));
         bookingRepository.findFirstByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now())
                 .orElseThrow(() -> new ValidationException("User с заданным id = " + userId + " ещё не брал в аренду этот предмет"));
-        if (item.getOwner().getId() == userId) {
+        if (item.getOwner().getId().equals(userId)) {
             throw new ValidationException("User с заданным id = " + userId + " является владельцем");
         }
         Comment comment = new Comment();
