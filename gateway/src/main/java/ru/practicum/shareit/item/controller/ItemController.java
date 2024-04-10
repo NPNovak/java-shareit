@@ -77,7 +77,7 @@ public class ItemController {
     public ResponseEntity<Object> addComment(
             @Min(value = 1, message = "UserId должно быть больше 0")
             @RequestHeader("X-Sharer-User-Id") Integer userId,
-            @RequestBody CommentDto commentDto,
+            @Valid @RequestBody CommentDto commentDto,
             @Min(value = 1, message = "ItemId должно быть больше 0")
             @PathVariable("itemId") Integer itemId) throws ValidationException {
         log.info("Получен POST запрос на добавление нового коментария");
